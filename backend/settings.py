@@ -143,7 +143,7 @@ REST_FRAMEWORK = {
 CORS_ORIGIN_ALLOW_ALL = True
 CORS_ORIGIN_WHITELIST = []
 
-AUTH_USER_MODEL = 'users.CustomUser'
+AUTH_USER_MODEL = 'users.User'
 AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',
     'users.backends.EmailBackend',
@@ -154,4 +154,8 @@ JWT_AUTH = {
     'JWT_EXPIRATION_DELTA': timedelta(minutes=15),
     'JWT_REFRESH_EXPIRATION_DELTA': timedelta(days=7),
 }
+
+CSRF_COOKIE_SECURE = False
+CSRF_COOKIE_HTTPONLY = False
+
 
