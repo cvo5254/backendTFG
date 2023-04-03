@@ -1,18 +1,21 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework_simplejwt.tokens import RefreshToken
-from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
-from rest_framework_simplejwt.views import TokenObtainPairView
+from django.contrib.auth import authenticate, login
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
 
-class LoginView(TokenObtainPairView):
-    serializer_class = TokenObtainPairSerializer
+@csrf_exempt
+def LoginView(request):
+    if request.method == 'POST':
+        email = request.POST.get('email')
+        password = request.POST.get('password')
+        user = authenticate(request, email=email, password=password)
+        if user is not None and not user.is_gestor:
+            login(request, user)
+            return JsonResponse({'success': True})
+        elif user is not None and user.is_gestor:
+            return JsonResponse({'error': 'Este usuario no está autorizado para iniciar sesión.'})
+        else:
+            return JsonResponse({'error': 'Credenciales inválidas.'})
 
-    def post(self, request, *args, **kwargs):
-        response = super().post(request, *args, **kwargs)
-        refresh_token = response.data['refresh']
-        access_token = response.data['access']
-        response.set_cookie(key='refresh_token', value=refresh_token, httponly=True)
-        return response
-
-    
-
+    return JsonResponse({'error': 'Método no permitido.'})
