@@ -1,21 +1,57 @@
-from rest_framework.views import APIView
+from rest_framework.decorators import api_view
 from rest_framework.response import Response
-from django.contrib.auth import authenticate, login
-from django.http import JsonResponse
-from django.views.decorators.csrf import csrf_exempt
+from rest_framework import status
+from .serializers import UsuarioSerializer, GestorSerializer
 
-@csrf_exempt
-def LoginView(request):
+@api_view(['POST'])
+def login_desde_movil(request):
+    # Validar que se esté haciendo una petición POST
     if request.method == 'POST':
-        email = request.POST.get('email')
-        password = request.POST.get('password')
-        user = authenticate(request, email=email, password=password)
-        if user is not None and not user.is_gestor:
-            login(request, user)
-            return JsonResponse({'success': True})
-        elif user is not None and user.is_gestor:
-            return JsonResponse({'error': 'Este usuario no está autorizado para iniciar sesión.'})
-        else:
-            return JsonResponse({'error': 'Credenciales inválidas.'})
+        # Obtener los datos de inicio de sesión desde la petición
+        email = request.data.get('email')
+        password = request.data.get('password')
 
-    return JsonResponse({'error': 'Método no permitido.'})
+        # Validar si el usuario es básico
+        try:
+            usuario = UsuarioSerializer.objects.get(email=email)
+        except UsuarioSerializer.DoesNotExist:
+            return Response({'error': 'El usuario no existe'}, status=status.HTTP_400_BAD_REQUEST)
+
+        # Validar si la contraseña es correcta
+        if usuario.check_password(password):
+            # Realizar la lógica de inicio de sesión para el usuario básico
+            # ...
+
+            # Devolver la respuesta de éxito
+            return Response({'mensaje': 'Inicio de sesión exitoso'}, status=status.HTTP_200_OK)
+        else:
+            return Response({'error': 'Contraseña incorrecta'}, status=status.HTTP_400_BAD_REQUEST)
+
+    return Response({'error': 'Método no permitido'}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
+
+
+@api_view(['POST'])
+def login_desde_web(request):
+    # Validar que se esté haciendo una petición POST
+    if request.method == 'POST':
+        # Obtener los datos de inicio de sesión desde la petición
+        email = request.data.get('email')
+        password = request.data.get('password')
+
+        # Validar si el usuario es gestor
+        try:
+            gestor = GestorSerializer.objects.get(email=email)
+        except GestorSerializer.DoesNotExist:
+            return Response({'error': 'El gestor no existe'}, status=status.HTTP_400_BAD_REQUEST)
+
+        # Validar si la contraseña es correcta
+        if gestor.check_password(password):
+            # Realizar la lógica de inicio de sesión para el gestor
+            # ...
+
+            # Devolver la respuesta de éxito
+            return Response({'mensaje': 'Inicio de sesión exitoso'}, status=status.HTTP_200_OK)
+        else:
+            return Response({'error': 'Contraseña incorrecta'}, status=status.HTTP_400_BAD_REQUEST)
+
+    return Response({'error': 'Método no permitido'}, status=status.HTTP_405_METHOD_NOT_ALLOWED)

@@ -15,9 +15,9 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-from users.views import LoginView
+from users.views import login_desde_web
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('api/login/', LoginView, name='login')
+    path('api/login/', login_desde_web, name='login')
 ]
