@@ -2,6 +2,7 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
 from .serializers import UsuarioSerializer, GestorSerializer
+from .models import CustomUser, Gestor
 
 @api_view(['POST'])
 def login_desde_movil(request):
@@ -13,8 +14,8 @@ def login_desde_movil(request):
 
         # Validar si el usuario es básico
         try:
-            usuario = UsuarioSerializer.objects.get(email=email)
-        except UsuarioSerializer.DoesNotExist:
+            usuario = CustomUser.objects.get(email=email)
+        except CustomUser.DoesNotExist:
             return Response({'error': 'El usuario no existe'}, status=status.HTTP_400_BAD_REQUEST)
 
         # Validar si la contraseña es correcta
@@ -40,8 +41,8 @@ def login_desde_web(request):
 
         # Validar si el usuario es gestor
         try:
-            gestor = GestorSerializer.objects.get(email=email)
-        except GestorSerializer.DoesNotExist:
+            gestor = Gestor.objects.get(email=email)
+        except Gestor.DoesNotExist:
             return Response({'error': 'El gestor no existe'}, status=status.HTTP_400_BAD_REQUEST)
 
         # Validar si la contraseña es correcta
