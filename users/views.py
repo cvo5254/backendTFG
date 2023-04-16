@@ -60,3 +60,28 @@ def login_desde_web(request):
             return Response({'error': 'Contraseña incorrecta'}, status=status.HTTP_400_BAD_REQUEST)
 
     return Response({'error': 'Método no permitido'}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
+
+
+@api_view(['POST'])
+def registro_usuario(request):
+    # Validar que se esté haciendo una petición POST
+    if request.method == 'POST':
+        # Obtener los datos de registro desde la petición
+        email = request.data.get('email')
+        password = request.data.get('password')
+        # Puedes agregar más campos necesarios para el registro
+        try:
+            usuario = CustomUser.objects.create_user(email=email, password=password)
+            # Puedes agregar más campos necesarios para el registro
+            usuario.save()
+        except ValueError as e:
+            return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
+        # Serializar el usuario creado
+        serializer = UsuarioSerializer(usuario)
+
+        # Devolver la respuesta de éxito
+        return Response({'mensaje': 'Registro de usuario exitoso', 'usuario': serializer.data}, status=status.HTTP_201_CREATED)
+
+    return Response({'error': 'Método no permitido'}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
+
