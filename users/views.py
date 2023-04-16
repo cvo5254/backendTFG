@@ -17,6 +17,10 @@ def login_desde_movil(request):
             usuario = CustomUser.objects.get(email=email)
         except CustomUser.DoesNotExist:
             return Response({'error': 'El usuario no existe'}, status=status.HTTP_400_BAD_REQUEST)
+        
+        # Verificar si el usuario está activo
+        if not usuario.is_active:
+            return Response({'error': 'El usuario está inactivo'}, status=status.HTTP_400_BAD_REQUEST)
 
         # Validar si la contraseña es correcta
         if usuario.check_password(password):

@@ -45,6 +45,9 @@ class CustomUser(AbstractBaseUser):
 
     def get_short_name(self):
         return self.first_name
+    
+    def is_active(self):
+        return self.is_active
 
 class Gestor(CustomUser):
     direccion = models.CharField(max_length=255)
