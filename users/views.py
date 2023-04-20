@@ -85,3 +85,26 @@ def registro_usuario(request):
 
     return Response({'error': 'Método no permitido'}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
+@api_view(['PUT'])
+def activar_usuario(request):
+    # Validar que se esté haciendo una petición PUT
+    if request.method == 'PUT':
+    # Obtener el email del usuario a activar desde la petición
+        email = request.data.get('email')
+            # Buscar el usuario a activar
+        try:
+            usuario = CustomUser.objects.get(email=email)
+        except CustomUser.DoesNotExist:
+            return Response({'error': 'Usuario no encontrado'}, status=status.HTTP_404_NOT_FOUND)
+
+        # Activar el usuario
+        usuario.is_active = True
+        usuario.save()
+
+        # Serializar el usuario modificado
+        serializer = UsuarioSerializer(usuario)
+
+        # Devolver la respuesta de éxito
+        return Response({'mensaje': 'Activación de usuario exitosa', 'usuario': serializer.data}, status=status.HTTP_200_OK)
+
+    return Response({'error': 'Método no permitido'}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
