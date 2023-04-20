@@ -15,12 +15,13 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-from users.views import login_desde_web, login_desde_movil, registro_usuario, activar_usuario
+from users.views import login_desde_web, login_desde_movil, registro_usuario, activar_usuario, obtener_usuarios_basicos
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/login/', login_desde_web, name='login'),
     path('api/login_movil/', login_desde_movil, name='login_movil'),
     path('api/registro/', registro_usuario, name='registro_usuario'),
-    path('api/aprobar_registro', activar_usuario, name='activar_usuario')
+    path('api/aprobar_registro', activar_usuario, name='activar_usuario'),
+    path('api/obtener_usuarios/', obtener_usuarios_basicos, name='obtener_usuarios')
 ]

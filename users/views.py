@@ -108,3 +108,21 @@ def activar_usuario(request):
         return Response({'mensaje': 'Activación de usuario exitosa', 'usuario': serializer.data}, status=status.HTTP_200_OK)
 
     return Response({'error': 'Método no permitido'}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
+
+@api_view(['GET'])
+def obtener_usuarios_basicos(request):
+    # Obtener los usuarios básicos (no gestores)
+    usuarios_basicos = CustomUser.objects.exclude(gestor__isnull=False)
+    
+
+    # Obtener el valor del parámetro opcional "is_active"
+    is_active = request.query_params.get('is_active')
+
+    # Si el parámetro is_active tiene valor, filtrar por ese valor
+    if is_active is not None:
+        usuarios_basicos = usuarios_basicos.filter(is_active=is_active)
+
+    # Serializar los usuarios y devolver la respuesta
+    serializer = UsuarioSerializer(usuarios_basicos, many=True)
+    return Response(serializer.data)
+
