@@ -1,11 +1,11 @@
 from rest_framework import serializers
 from .models import Emergency
 from channels.serializers import ChannelSerializer
-from users.serializers import CustomUserSerializer
+from users.serializers import UsuarioSerializer
 
 class EmergencySerializer(serializers.ModelSerializer):
     channel = ChannelSerializer()
-    reporter = CustomUserSerializer()
+    reporter = UsuarioSerializer()
 
     class Meta:
         model = Emergency

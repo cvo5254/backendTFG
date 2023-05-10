@@ -17,6 +17,7 @@ from django.contrib import admin
 from django.urls import path, include
 from users.views import login_desde_web, login_desde_movil, registro_usuario, activar_usuario, obtener_usuarios_basicos
 from channels.views import create_channel
+from emergencies.views import create_emergency
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -25,5 +26,6 @@ urlpatterns = [
     path('api/registro/', registro_usuario, name='registro_usuario'),
     path('api/aprobar_registro', activar_usuario, name='activar_usuario'),
     path('api/obtener_usuarios/', obtener_usuarios_basicos, name='obtener_usuarios'),
-    path('api/crear_canal/', create_channel, name='crear_canal')
+    path('api/crear_canal/', create_channel, name='crear_canal'),
+    path('api/crear_emergencia/', create_emergency, name='crear_emergencia')
 ]

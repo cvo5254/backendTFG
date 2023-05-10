@@ -6,12 +6,10 @@ from channels.serializers import ChannelSerializer
 
 @api_view(['POST'])
 def create_channel(request):
-    # Validar que se esté haciendo una petición POST
     if request.method == 'POST':
-        # Obtener los datos del nuevo canal desde la petición
         nombre = request.data.get('nombre')
 
-        # Crear el nuevo canal con la lista de emergencias vacía
+
         try:
             channel = Channel.objects.create(nombre=nombre)
             channel.save()
@@ -20,7 +18,6 @@ def create_channel(request):
         
         serializer = ChannelSerializer(channel)
 
-        # Devolver la respuesta de éxito
         return Response({'mensaje': 'Canal creado exitosamente', 'canal': serializer.data}, status=status.HTTP_201_CREATED)
 
     return Response({'error': 'Método no permitido'}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
