@@ -9,4 +9,4 @@ class EmergencySerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Emergency
-        fields = ['id', 'title', 'description', 'report_date', 'publish_date', 'channel', 'reporter']
+        fields = ['id', 'title', 'description', 'report_date', 'publish_date', 'channel', 'reporter', 'is_published']

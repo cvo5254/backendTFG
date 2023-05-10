@@ -9,3 +9,4 @@ class Emergency(models.Model):
     publish_date = models.DateTimeField(blank=True, null=True)
     channel = models.ForeignKey(Channel, on_delete=models.CASCADE, null=True, blank=True)
     reporter = models.ForeignKey(CustomUser, on_delete=models.CASCADE, null=True, blank=True)
+    is_published = models.BooleanField(default=False)
