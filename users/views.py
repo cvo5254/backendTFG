@@ -89,11 +89,12 @@ def registro_usuario(request):
 def activar_usuario(request):
     # Validar que se esté haciendo una petición PUT
     if request.method == 'PUT':
-    # Obtener el email del usuario a activar desde la petición
-        email = request.data.get('email')
-            # Buscar el usuario a activar
+        # Obtener el ID del usuario a activar desde la petición
+        user_id = request.data.get('user_id')
+        
+        # Buscar el usuario a activar
         try:
-            usuario = CustomUser.objects.get(email=email)
+            usuario = CustomUser.objects.get(id=user_id)
         except CustomUser.DoesNotExist:
             return Response({'error': 'Usuario no encontrado'}, status=status.HTTP_404_NOT_FOUND)
 
@@ -108,6 +109,7 @@ def activar_usuario(request):
         return Response({'mensaje': 'Activación de usuario exitosa', 'usuario': serializer.data}, status=status.HTTP_200_OK)
 
     return Response({'error': 'Método no permitido'}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
+
 
 @api_view(['GET'])
 def obtener_usuarios_basicos(request):
