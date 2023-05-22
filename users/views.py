@@ -27,8 +27,8 @@ def login_desde_movil(request):
             # Realizar la lógica de inicio de sesión para el usuario básico
             # ...
 
-            # Devolver la respuesta de éxito
-            return Response({'mensaje': 'Inicio de sesión exitoso'}, status=status.HTTP_200_OK)
+            usuario_serializer = UsuarioSerializer(usuario)  # Importa el serializador correspondiente
+            return Response({'mensaje': 'Inicio de sesión exitoso', 'usuario': usuario_serializer.data}, status=status.HTTP_200_OK)
         else:
             return Response({'error': 'Contraseña incorrecta'}, status=status.HTTP_400_BAD_REQUEST)
 

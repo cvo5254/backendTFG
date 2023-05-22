@@ -16,7 +16,7 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from users.views import login_desde_web, login_desde_movil, registro_usuario, activar_usuario, obtener_usuarios_basicos
-from channels.views import create_channel
+from channels.views import create_channel, subscribe_to_channel, get_user_subscriptions
 from emergencies.views import create_emergency
 
 urlpatterns = [
@@ -27,5 +27,7 @@ urlpatterns = [
     path('api/aprobar_registro', activar_usuario, name='activar_usuario'),
     path('api/obtener_usuarios/', obtener_usuarios_basicos, name='obtener_usuarios'),
     path('api/crear_canal/', create_channel, name='crear_canal'),
-    path('api/crear_emergencia/', create_emergency, name='crear_emergencia')
+    path('api/crear_emergencia/', create_emergency, name='crear_emergencia'),
+    path('api/suscribirse/', subscribe_to_channel, name='suscribirse_a_canal'),
+    path('api/<int:user_id>/subscriptions/', get_user_subscriptions,  name='user_subscriptions')
 ]
