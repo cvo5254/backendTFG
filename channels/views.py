@@ -56,3 +56,16 @@ def get_user_subscriptions(request, user_id):
     serializer = ChannelSerializer(channels, many=True)
 
     return Response(serializer.data, status=status.HTTP_200_OK)
+
+@api_view(['GET'])
+def get_unsubscribed_channels(request, user_id):
+    try:
+        user = CustomUser.objects.get(id=user_id)
+    except CustomUser.DoesNotExist:
+        return Response({'error': 'El usuario no existe'}, status=status.HTTP_404_NOT_FOUND)
+
+    subscribed_channels = user.channel_set.all()
+    all_channels = Channel.objects.exclude(id__in=subscribed_channels)
+    serializer = ChannelSerializer(all_channels, many=True)
+
+    return Response(serializer.data, status=status.HTTP_200_OK)
