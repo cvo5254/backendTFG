@@ -11,8 +11,8 @@ def create_emergency(request):
     if request.method == 'POST':
         title = request.data.get('title')
         description = request.data.get('decriprio')
-        channel = request.POST.get('channel_id')
-        reporter_id = request.POST.get('reporter_id')
+        channel = request.data.get('channel_id')
+        reporter_id = request.data.get('reporter_id')
         report_date = datetime.now()
 
         try:
