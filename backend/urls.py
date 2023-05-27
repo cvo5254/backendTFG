@@ -17,7 +17,7 @@ from django.contrib import admin
 from django.urls import path, include
 from users.views import login_desde_web, login_desde_movil, registro_usuario, activar_usuario, obtener_usuarios_basicos
 from channels.views import create_channel, subscribe_to_channel, get_user_subscriptions, get_unsubscribed_channels
-from emergencies.views import create_emergency
+from emergencies.views import create_emergency, get_channel_emergencies
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -30,6 +30,7 @@ urlpatterns = [
     path('api/crear_emergencia/', create_emergency, name='crear_emergencia'),
     path('api/suscribirse/', subscribe_to_channel, name='suscribirse_a_canal'),
     path('api/<int:user_id>/subscriptions/', get_user_subscriptions,  name='user_subscriptions'),
-    path('api/<int:user_id>/notSuscribedChannels/', get_unsubscribed_channels, name = 'obtener_canales_no_suscritos')
+    path('api/<int:user_id>/notSuscribedChannels/', get_unsubscribed_channels, name = 'obtener_canales_no_suscritos'),
+    path('api/<int:channel_id>/emergencies', get_channel_emergencies, name='emergencias del canal')
 
 ]
