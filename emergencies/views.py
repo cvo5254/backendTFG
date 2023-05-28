@@ -41,7 +41,31 @@ def get_channel_emergencies(request, channel_id):
     except Channel.DoesNotExist:
         return Response({'error': 'El canal no existe'}, status=status.HTTP_404_NOT_FOUND)
 
-    emergencies = Emergency.objects.filter(channel=channel)
+    emergencies = Emergency.objects.filter(channel=channel, is_published=True)
     serializer = EmergencyListSerializer(emergencies, many=True)
+
+    return Response(serializer.data, status=status.HTTP_200_OK)
+
+@api_view(['PUT'])
+def publish_emergency(request, emergency_id):
+    try:
+        emergency = Emergency.objects.get(id=emergency_id)
+    except Emergency.DoesNotExist:
+        return Response({'error': 'La emergencia no existe'}, status=status.HTTP_404_NOT_FOUND)
+
+    emergency.publish_date = datetime.now()
+    emergency.is_published = True
+
+    channel_id = request.data.get('channel_id')
+    if channel_id:
+        try:
+            channel = Channel.objects.get(id=channel_id)
+            emergency.channel = channel
+        except Channel.DoesNotExist:
+            return Response({'error': 'El canal no existe'}, status=status.HTTP_404_NOT_FOUND)
+
+    emergency.save()
+
+    serializer = EmergencySerializer(emergency)
 
     return Response(serializer.data, status=status.HTTP_200_OK)
