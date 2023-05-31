@@ -116,3 +116,42 @@ def get_emergencies(request):
     serializer = EmergencySerializer(emergencias, many=True)
     return Response(serializer.data)
 
+@api_view(['DELETE'])
+def delete_emergency(request, id):
+    try:
+        emergencia = Emergency.objects.get(id=id)
+        emergencia.delete()
+        return Response({'mensaje': 'Emergencia eliminada exitosamente'}, status=status.HTTP_200_OK)
+    except Emergency.DoesNotExist:
+        return Response({'error': 'La emergencia no existe'}, status=status.HTTP_404_NOT_FOUND)
+
+
+@api_view(['PUT'])
+def edit_emergency(request, id):
+    try:
+        emergencia = Emergency.objects.get(id=id)
+
+        title = request.data.get('title')
+        description = request.data.get('description')
+        channel_id = request.data.get('channel_id')
+        is_published = request.data.get('is_published')
+        images = request.data.get('images')
+
+        if title is not None:
+            emergencia.title = title
+        if description is not None:
+            emergencia.description = description
+        if channel_id is not None:
+            channel = Channel.objects.get(id=channel_id)
+            emergencia.channel = channel
+        if is_published is not None:
+            emergencia.is_published = is_published
+        if images is not None:
+            emergencia.images = images
+
+        emergencia.save()
+        return Response({'mensaje': 'Emergencia editada exitosamente'}, status=status.HTTP_200_OK)
+    except Emergency.DoesNotExist:
+        return Response({'error': 'La emergencia no existe'}, status=status.HTTP_404_NOT_FOUND)
+    except Channel.DoesNotExist:
+        return Response({'error': 'El canal no existe'}, status=status.HTTP_404_NOT_FOUND)
