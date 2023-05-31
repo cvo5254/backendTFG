@@ -69,3 +69,24 @@ def get_unsubscribed_channels(request, user_id):
     serializer = ChannelSerializer(all_channels, many=True)
 
     return Response(serializer.data, status=status.HTTP_200_OK)
+
+@api_view(['POST'])
+def unsubscribe_from_channel(request):
+    if request.method == 'POST':
+        channel_id = request.data.get('channel_id')
+        user_id = request.data.get('user_id')
+
+        try:
+            channel = Channel.objects.get(id=channel_id)
+            user = CustomUser.objects.get(id=user_id)
+        except Channel.DoesNotExist:
+            return Response({'error': 'El canal no existe'}, status=status.HTTP_404_NOT_FOUND)
+        except CustomUser.DoesNotExist:
+            return Response({'error': 'El usuario no existe'}, status=status.HTTP_404_NOT_FOUND)
+
+        channel.subscribers.remove(user)
+        channel.save()
+
+        return Response({'mensaje': 'Usuario eliminado como suscriptor del canal exitosamente'}, status=status.HTTP_200_OK)
+
+    return Response({'error': 'Método no permitido'}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
