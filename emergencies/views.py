@@ -99,3 +99,20 @@ def emergency_images_upload(request, emergency_id):
         return Response({'mensaje': 'Fotos subidas exitosamente', 'emergencia': serializer.data}, status=status.HTTP_200_OK)
 
     return Response({'error': 'Método no permitido'}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
+
+@api_view(['GET'])
+def get_emergencies(request):
+    # Obtener todas las emergencias
+    emergencias = Emergency.objects.all()
+
+    # Obtener el valor del parámetro opcional "is_published"
+    is_published = request.query_params.get('is_published')
+
+    # Si el parámetro is_published tiene valor, filtrar por ese valor
+    if is_published is not None:
+        emergencias = emergencias.filter(is_published=is_published)
+
+    # Serializar las emergencias y devolver la respuesta
+    serializer = EmergencySerializer(emergencias, many=True)
+    return Response(serializer.data)
+
