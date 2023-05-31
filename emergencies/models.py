@@ -10,3 +10,5 @@ class Emergency(models.Model):
     channel = models.ForeignKey(Channel, on_delete=models.CASCADE, null=True, blank=True)
     reporter = models.ForeignKey(CustomUser, on_delete=models.CASCADE, null=True, blank=True)
     is_published = models.BooleanField(default=False)
+    images = models.ImageField(upload_to='emergency_images/', blank=True, null=True)
+

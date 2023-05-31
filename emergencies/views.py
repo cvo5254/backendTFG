@@ -69,3 +69,33 @@ def publish_emergency(request, emergency_id):
     serializer = EmergencySerializer(emergency)
 
     return Response(serializer.data, status=status.HTTP_200_OK)
+
+@api_view(['POST'])
+def emergency_images_upload(request, emergency_id):
+    if request.method == 'POST':
+        try:
+            emergency = Emergency.objects.get(id=emergency_id)
+        except Emergency.DoesNotExist:
+            return Response({'error': 'La emergencia no existe'}, status=status.HTTP_404_NOT_FOUND)
+
+        photos = request.FILES.getlist('photos')
+
+        for photo in photos:
+            # Aquí puedes realizar el procesamiento y almacenamiento de las fotos
+            
+            # Por ejemplo, guardando la foto en el sistema de archivos
+            photo_path = f'media/emergency_photos/{photo.name}'
+            with open(photo_path, 'wb') as f:
+                for chunk in photo.chunks():
+                    f.write(chunk)
+
+            # Puedes agregar la ruta de la foto a la lista de fotos asociadas a la emergencia
+            emergency.photos.add(photo_path)
+
+        emergency.save()
+
+        serializer = EmergencySerializer(emergency)
+
+        return Response({'mensaje': 'Fotos subidas exitosamente', 'emergencia': serializer.data}, status=status.HTTP_200_OK)
+
+    return Response({'error': 'Método no permitido'}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
