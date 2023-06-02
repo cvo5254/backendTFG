@@ -6,4 +6,4 @@ class ChannelSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = Channel
-        fields = ['id', 'nombre', 'subscribers']
+        fields = ['id', 'nombre', 'is_blocked', 'subscribers']

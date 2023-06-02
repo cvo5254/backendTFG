@@ -16,7 +16,7 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from users.views import login_desde_web, login_desde_movil, registro_usuario, activar_usuario, obtener_usuarios_basicos, delete_user, block_user, unblock_user, create_gestor
-from channels.views import create_channel, subscribe_to_channel, get_user_subscriptions, get_unsubscribed_channels, unsubscribe_from_channel
+from channels.views import create_channel, subscribe_to_channel, get_user_subscriptions, get_unsubscribed_channels, unsubscribe_from_channel, edit_channel, block_channel, unblock_channel, delete_channel
 from emergencies.views import create_emergency, get_channel_emergencies, publish_emergency, emergency_images_upload, get_emergencies, delete_emergency, edit_emergency
 
 urlpatterns = [
@@ -42,4 +42,8 @@ urlpatterns = [
     path('api/<int:user_id>/deleteUser/', delete_user, name='eliminar_usuario'),
     path('api/<int:user_id>/blockUser/', block_user, name='bloquear_usuario'),
     path('api/<int:user_id>/unblockUser/', unblock_user, name='desbloquear_usuario'),
+    path('api/<int:channel_id>/editChannel/', edit_channel, name='editar_canal'),
+    path('api/<int:channel_id>/deleteChannel/', delete_channel, name='eliminar_canal'),
+    path('api/<int:channel_id>/blockChannel/', block_channel, name='bloquear_canal'),
+    path('api/<int:channel_id>/unblockChannel/', unblock_channel, name='desbloquear_canal'),
 ]
