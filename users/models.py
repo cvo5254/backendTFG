@@ -27,6 +27,7 @@ class CustomUser(AbstractBaseUser):
     email = models.EmailField(_('email address'), unique=True)
     is_active = models.BooleanField(_('active'), default=False)
     is_staff = models.BooleanField(_('staff status'), default=False)
+    is_blocked= models.BooleanField(_('blocked'), default=False)
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = []

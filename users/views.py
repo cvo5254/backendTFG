@@ -17,10 +17,14 @@ def login_desde_movil(request):
             usuario = CustomUser.objects.get(email=email)
         except CustomUser.DoesNotExist:
             return Response({'error': 'El usuario no existe'}, status=status.HTTP_400_BAD_REQUEST)
-        
+
         # Verificar si el usuario está activo
         if not usuario.is_active:
             return Response({'error': 'El usuario está inactivo'}, status=status.HTTP_400_BAD_REQUEST)
+        
+        # Verificar si el usuario está bloqueado
+        if usuario.is_blocked:
+            return Response({'error': 'El usuario está bloqueado'}, status=status.HTTP_400_BAD_REQUEST)
 
         # Validar si la contraseña es correcta
         if usuario.check_password(password):
@@ -129,3 +133,41 @@ def obtener_usuarios_basicos(request):
     serializer = UsuarioSerializer(usuarios_basicos, many=True)
     return Response(serializer.data)
 
+@api_view(['DELETE'])
+def delete_user(request, user_id):
+    try:
+        user = CustomUser.objects.get(id=user_id)
+        user.delete()
+        return Response({'mensaje': 'Usuario eliminado exitosamente'}, status=status.HTTP_200_OK)
+    except CustomUser.DoesNotExist:
+        return Response({'error': 'El usuario no existe'}, status=status.HTTP_404_NOT_FOUND)
+
+@api_view(['PUT'])
+def block_user(request, user_id):
+    try:
+        user = CustomUser.objects.get(id=user_id)
+    except CustomUser.DoesNotExist:
+        return Response({'error': 'El usuario no existe'}, status=status.HTTP_404_NOT_FOUND)
+    
+    user.is_blocked = True
+
+    user.save()
+
+    serializer = UsuarioSerializer(user)
+
+    return Response(serializer.data, status=status.HTTP_200_OK)    
+
+@api_view(['PUT'])
+def unblock_user(request, user_id):
+    try:
+        user = CustomUser.objects.get(id=user_id)
+    except CustomUser.DoesNotExist:
+        return Response({'error': 'El usuario no existe'}, status=status.HTTP_404_NOT_FOUND)
+    
+    user.is_blocked = False
+
+    user.save()
+
+    serializer = UsuarioSerializer(user)
+
+    return Response(serializer.data, status=status.HTTP_200_OK)
