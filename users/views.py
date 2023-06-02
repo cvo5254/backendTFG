@@ -55,7 +55,8 @@ def login_desde_web(request):
             # ...
 
             # Devolver la respuesta de éxito
-            return Response({'mensaje': 'Inicio de sesión exitoso'}, status=status.HTTP_200_OK)
+            gestor_serializer = GestorSerializer(gestor)
+            return Response({'mensaje': 'Inicio de sesión exitoso', 'gestor': gestor_serializer.data}, status=status.HTTP_200_OK)
         else:
             return Response({'error': 'Contraseña incorrecta'}, status=status.HTTP_400_BAD_REQUEST)
 

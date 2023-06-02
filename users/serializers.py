@@ -8,8 +8,7 @@ class UsuarioSerializer(serializers.ModelSerializer):
         read_only_fields = ('email', 'is_staff')
 
 class GestorSerializer(serializers.ModelSerializer):
-    usuario = UsuarioSerializer()
 
     class Meta:
         model = Gestor
-        fields = ('usuario', 'direccion', 'telefono', 'es_administrador')
+        fields = ('id', 'email', 'es_administrador')
