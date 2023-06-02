@@ -15,7 +15,7 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-from users.views import login_desde_web, login_desde_movil, registro_usuario, activar_usuario, obtener_usuarios_basicos, delete_user, block_user, unblock_user
+from users.views import login_desde_web, login_desde_movil, registro_usuario, activar_usuario, obtener_usuarios_basicos, delete_user, block_user, unblock_user, create_gestor
 from channels.views import create_channel, subscribe_to_channel, get_user_subscriptions, get_unsubscribed_channels, unsubscribe_from_channel
 from emergencies.views import create_emergency, get_channel_emergencies, publish_emergency, emergency_images_upload, get_emergencies, delete_emergency, edit_emergency
 
@@ -24,6 +24,7 @@ urlpatterns = [
     path('api/login/', login_desde_web, name='login'),
     path('api/login_movil/', login_desde_movil, name='login_movil'),
     path('api/registro/', registro_usuario, name='registro_usuario'),
+    path('api/create_gestor/', create_gestor, name='crear_gestor' ),
     path('api/aprobar_registro', activar_usuario, name='activar_usuario'),
     path('api/obtener_usuarios/', obtener_usuarios_basicos, name='obtener_usuarios'),
     path('api/crear_canal/', create_channel, name='crear_canal'),

@@ -66,6 +66,26 @@ def login_desde_web(request):
 
     return Response({'error': 'Método no permitido'}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
+@api_view(['POST'])
+def create_gestor(request):
+    email = request.data.get('email')
+    password = request.data.get('password')
+    direccion = request.data.get('direccion')
+    telefono = request.data.get('telefono')
+    es_administrador = request.data.get('es_administrador')
+
+    try:
+        gestor = Gestor.objects.create_user(email=email, password=password)
+        gestor.direccion = direccion
+        gestor.telefono = telefono
+        gestor.es_administrador = es_administrador
+        gestor.save()
+    except ValueError as e:
+        return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
+    serializer = GestorSerializer(gestor)
+    return Response(serializer.data, status=status.HTTP_201_CREATED)
+
 
 @api_view(['POST'])
 def registro_usuario(request):
