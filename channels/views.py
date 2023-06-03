@@ -102,8 +102,8 @@ def edit_channel(request, channel_id):
 
 @api_view(['GET'])
 def get_channels(request):
-    unblocked_channels = Channel.objects.filter(is_blocked=False)
-    serializer = ChannelSerializer(unblocked_channels, many=True)
+    channels = Channel.objects.all()
+    serializer = ChannelSerializer(channels, many=True)
     return Response(serializer.data, status=status.HTTP_200_OK)
 
 

@@ -86,6 +86,27 @@ def create_gestor(request):
     serializer = GestorSerializer(gestor)
     return Response(serializer.data, status=status.HTTP_201_CREATED)
 
+@api_view(['PUT'])
+def edit_gestor(request, gestor_id):
+    password = request.data.get('password')
+    direccion = request.data.get('direccion')
+    telefono = request.data.get('telefono')
+
+    try:
+        gestor = Gestor.objects.get(id=gestor_id)
+    except Gestor.DoesNotExist:
+        return Response({'error': 'Gestor no encontrado'}, status=status.HTTP_404_NOT_FOUND)
+    try:
+        gestor.password = password
+        gestor.direccion = direccion
+        gestor.telefono = telefono
+        gestor.save()
+    except ValueError as e:
+        return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
+    serializer = GestorSerializer(gestor)
+    return Response(serializer.data, status=status.HTTP_201_CREATED)
+
 
 @api_view(['POST'])
 def registro_usuario(request):
