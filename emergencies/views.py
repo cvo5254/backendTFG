@@ -116,6 +116,15 @@ def get_emergencies(request):
     serializer = EmergencySerializer(emergencias, many=True)
     return Response(serializer.data)
 
+@api_view(['GET'])
+def get_emergency(request, emergency_id):
+    try:
+        emergency= Emergency.objects.get(id=emergency_id)
+        serializer = EmergencySerializer(emergency)
+        return Response(serializer.data)
+    except Emergency.DoesNotExist:
+        return Response({'error': 'La emergencia no existe'}, status=status.HTTP_404_NOT_FOUND)
+    
 @api_view(['DELETE'])
 def delete_emergency(request, id):
     try:

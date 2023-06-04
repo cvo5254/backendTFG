@@ -17,7 +17,7 @@ from django.contrib import admin
 from django.urls import path, include
 from users.views import login_desde_web, login_desde_movil, registro_usuario, activar_usuario, obtener_usuarios_basicos, delete_user, block_user, unblock_user, create_gestor, edit_gestor
 from channels.views import create_channel, subscribe_to_channel, get_user_subscriptions, get_unsubscribed_channels, unsubscribe_from_channel, edit_channel, block_channel, unblock_channel, delete_channel, get_channels
-from emergencies.views import create_emergency, get_channel_emergencies, publish_emergency, emergency_images_upload, get_emergencies, delete_emergency, edit_emergency
+from emergencies.views import create_emergency, get_channel_emergencies, publish_emergency, emergency_images_upload, get_emergencies, delete_emergency, edit_emergency, get_emergency
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -38,6 +38,7 @@ urlpatterns = [
     path('api/<int:emergency_id>/upload/', emergency_images_upload, name='publicar fotos de emergencias'),
     path('api/unsuscribe/', unsubscribe_from_channel, name='desuscribirse de canal'),
     path('api/allemergencies/', get_emergencies, name='obtener_emergencias'),
+    path('api/<int:emergency_id>/getEmergency/', get_emergency, name='obtener_emergencia_por_id'),
     path('api/<int:id>/deleteEmergency/', delete_emergency, name='eliminar_emergencia'),
     path('api/<int:id>/editEmergency/', edit_emergency, name='editar_emergencia'),
     path('api/<int:user_id>/deleteUser/', delete_user, name='eliminar_usuario'),
