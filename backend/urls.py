@@ -15,7 +15,7 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-from users.views import login_desde_web, login_desde_movil, registro_usuario, activar_usuario, obtener_usuarios_basicos, delete_user, block_user, unblock_user, create_gestor, edit_gestor
+from users.views import login_desde_web, login_desde_movil, registro_usuario, activar_usuario, obtener_usuarios_basicos, delete_user, block_user, unblock_user, create_gestor, edit_gestor, obtener_usuarios_gestores, get_gestor
 from channels.views import create_channel, subscribe_to_channel, get_user_subscriptions, get_unsubscribed_channels, unsubscribe_from_channel, edit_channel, block_channel, unblock_channel, delete_channel, get_channels
 from emergencies.views import create_emergency, get_channel_emergencies, publish_emergency, emergency_images_upload, get_emergencies, delete_emergency, edit_emergency, get_emergency
 
@@ -49,4 +49,6 @@ urlpatterns = [
     path('api/<int:channel_id>/blockChannel/', block_channel, name='bloquear_canal'),
     path('api/<int:channel_id>/unblockChannel/', unblock_channel, name='desbloquear_canal'),
     path('api/getChannels/', get_channels, name='obtener_canales'),
+    path('api/getGestors/', obtener_usuarios_gestores, name='obtener_usuarios_gestores'),
+    path('api/<int:gestor_id>/getGestor/', get_gestor, name='obtener_usuario_gestor_por_id')
 ]

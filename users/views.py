@@ -174,6 +174,24 @@ def obtener_usuarios_basicos(request):
     serializer = UsuarioSerializer(usuarios_basicos, many=True)
     return Response(serializer.data)
 
+
+@api_view(['GET'])
+def obtener_usuarios_gestores(request):
+    usuarios_gestores = Gestor.objects.all()
+
+
+    serializer = GestorSerializer(usuarios_gestores, many=True)
+    return Response(serializer.data)
+
+@api_view(['GET'])
+def get_gestor(request, gestor_id):
+    try:
+        emergency= Gestor.objects.get(id=gestor_id)
+        serializer = GestorSerializer(emergency)
+        return Response(serializer.data)
+    except Gestor.DoesNotExist:
+        return Response({'error': 'El gestor no existe'}, status=status.HTTP_404_NOT_FOUND)
+
 @api_view(['DELETE'])
 def delete_user(request, user_id):
     try:

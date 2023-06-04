@@ -11,4 +11,4 @@ class GestorSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Gestor
-        fields = ('id', 'email', 'es_administrador')
+        fields = ('id', 'email', 'es_administrador', 'telefono', 'direccion')
