@@ -88,24 +88,28 @@ def create_gestor(request):
 
 @api_view(['PUT'])
 def edit_gestor(request, gestor_id):
-    password = request.data.get('password')
-    direccion = request.data.get('direccion')
-    telefono = request.data.get('telefono')
-
     try:
         gestor = Gestor.objects.get(id=gestor_id)
     except Gestor.DoesNotExist:
         return Response({'error': 'Gestor no encontrado'}, status=status.HTTP_404_NOT_FOUND)
+
+    if 'email' in request.data:
+        gestor.email = request.data['email']
+    if 'password' in request.data:
+        gestor.password = request.data['password']
+    if 'direccion' in request.data:
+        gestor.direccion = request.data['direccion']
+    if 'telefono' in request.data:
+        gestor.telefono = request.data['telefono']
+
     try:
-        gestor.password = password
-        gestor.direccion = direccion
-        gestor.telefono = telefono
         gestor.save()
     except ValueError as e:
         return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
     serializer = GestorSerializer(gestor)
     return Response(serializer.data, status=status.HTTP_201_CREATED)
+
 
 
 @api_view(['POST'])
@@ -186,8 +190,8 @@ def obtener_usuarios_gestores(request):
 @api_view(['GET'])
 def get_gestor(request, gestor_id):
     try:
-        emergency= Gestor.objects.get(id=gestor_id)
-        serializer = GestorSerializer(emergency)
+        gestor= Gestor.objects.get(id=gestor_id)
+        serializer = GestorSerializer(gestor)
         return Response(serializer.data)
     except Gestor.DoesNotExist:
         return Response({'error': 'El gestor no existe'}, status=status.HTTP_404_NOT_FOUND)
