@@ -7,6 +7,8 @@ from emergencies.serializers import EmergencySerializer
 from emergencies.serializers import EmergencyListSerializer
 from users.models import CustomUser
 from channels.models import Channel
+from emergencies.bot import get_updates
+import asyncio
 
 @api_view(['POST'])
 def create_emergency(request):
@@ -16,10 +18,16 @@ def create_emergency(request):
         channel_id = request.data.get('channel_id')
         reporter_id = request.data.get('reporter_id')
         report_date = datetime.now()
-
+        
+        images = request.FILES.getlist('images')
+        
         try:
             channel = Channel.objects.get(id=channel_id)
             emergency = Emergency.objects.create(title=title, description=description, channel=channel, reporter_id=reporter_id, report_date=report_date)
+           
+            for image in images:
+                emergency.images.create(image=image)
+            
             emergency.save()
         except Channel.DoesNotExist:
             return Response({'error': 'El canal no existe'}, status=status.HTTP_404_NOT_FOUND)
@@ -31,7 +39,6 @@ def create_emergency(request):
         return Response({'mensaje': 'Emergencia creada exitosamente', 'emergencia': serializer.data}, status=status.HTTP_201_CREATED)
 
     return Response({'error': 'Método no permitido'}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
-
 
 
 @api_view(['GET'])
@@ -69,36 +76,6 @@ def publish_emergency(request, emergency_id):
     serializer = EmergencySerializer(emergency)
 
     return Response(serializer.data, status=status.HTTP_200_OK)
-
-@api_view(['POST'])
-def emergency_images_upload(request, emergency_id):
-    if request.method == 'POST':
-        try:
-            emergency = Emergency.objects.get(id=emergency_id)
-        except Emergency.DoesNotExist:
-            return Response({'error': 'La emergencia no existe'}, status=status.HTTP_404_NOT_FOUND)
-
-        photos = request.FILES.getlist('photos')
-
-        for photo in photos:
-            # Aquí puedes realizar el procesamiento y almacenamiento de las fotos
-            
-            # Por ejemplo, guardando la foto en el sistema de archivos
-            photo_path = f'media/emergency_photos/{photo.name}'
-            with open(photo_path, 'wb') as f:
-                for chunk in photo.chunks():
-                    f.write(chunk)
-
-            # Puedes agregar la ruta de la foto a la lista de fotos asociadas a la emergencia
-            emergency.photos.add(photo_path)
-
-        emergency.save()
-
-        serializer = EmergencySerializer(emergency)
-
-        return Response({'mensaje': 'Fotos subidas exitosamente', 'emergencia': serializer.data}, status=status.HTTP_200_OK)
-
-    return Response({'error': 'Método no permitido'}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
 @api_view(['GET'])
 def get_emergencies(request):
@@ -164,3 +141,13 @@ def edit_emergency(request, id):
         return Response({'error': 'La emergencia no existe'}, status=status.HTTP_404_NOT_FOUND)
     except Channel.DoesNotExist:
         return Response({'error': 'El canal no existe'}, status=status.HTTP_404_NOT_FOUND)
+        
+@api_view(['GET'])
+def get_telegram_messages(request):
+    try:
+        get_updates() # Espera la ejecución de get_updates()
+        return Response({'mensaje': 'Mensajes recibidos'}, status=status.HTTP_200_OK)
+    except Exception as e:
+        # Registrar el error
+        print(f"Error en get_telegram_messages: {str(e)}")
+        return Response({'error': 'Error'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
