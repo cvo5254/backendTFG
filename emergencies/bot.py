@@ -1,36 +1,34 @@
-from telegram import Bot
+import requests
+from django.http import JsonResponse
+from .models import Emergency
+from datetime import datetime
 
-# Crear una instancia de tu bot
-bot = Bot(token='5957844629:AAGk1zjMGoUcGF0SDA6c3T03eKr3JYShwN4')
-
-async def get_updates():
+def process_telegram_messages(request):
     try:
-        # Obtener las actualizaciones (mensajes) más recientes del grupo
-        updates = await bot.get_updates()
-        print(updates)
-        
-        for update in updates:
-            await process_update(update)
+        # Hacer una solicitud a la API de Telegram para obtener los mensajes
+        url = f"https://api.telegram.org/bot5957844629:AAGk1zjMGoUcGF0SDA6c3T03eKr3JYShwN4/getUpdates"
+        response = requests.get(url)
+        data = response.json()
+
+        # Procesar los mensajes recibidos
+        if data["ok"]:
+            messages = data["result"]
+            for message in messages:
+                chat_id = message["message"]["chat"]["id"]
+                text = message["message"]["text"]
+
+                # Realizar las acciones que deseas con los datos del mensaje
+                # Por ejemplo, crear una instancia de tu modelo de emergencia
+                emergency = Emergency()
+                emergency.title = "Alerta"
+                emergency.description = text
+                emergency.report_date = datetime.now()
+                emergency.publish_date = datetime.now()
+                emergency.is_published = True
+                emergency.save()
+
+        return JsonResponse({'message': 'Mensajes procesados'}, status=200)
     except Exception as e:
         # Registrar el error
-        print(f"Error en get_updates: {str(e)}")
-
-async def process_update(update):
-    try:
-        # Aquí puedes manejar la actualización recibida
-        message = update.message
-        chat_id = message.chat_id
-        text = message.text
-        
-        # Realiza las acciones que deseas con los datos del mensaje
-        # Por ejemplo, crear una instancia de tu modelo de emergencia
-        emergency = Emergency()
-        emergency.title = "Alerta"
-        emergency.description = text
-        emergency.report_date = timezone.now()
-        emergency.publish_date = timezone.now()
-        emergency.is_published = True
-        emergency.save()
-    except Exception as e:
-        # Registrar el error
-        print(f"Error en process_update: {str(e)}")
+        print(f"Error en process_telegram_messages: {str(e)}")
+        return JsonResponse({'error': 'Error interno'}, status=500)

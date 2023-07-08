@@ -7,11 +7,6 @@ from emergencies.serializers import EmergencySerializer
 from emergencies.serializers import EmergencyListSerializer
 from users.models import CustomUser
 from channels.models import Channel
-from emergencies.bot import get_updates
-from asgiref.sync import async_to_sync
-import asyncio
-from asgiref.sync import async_to_sync
-from django.http import HttpResponse
 
 @api_view(['POST'])
 def create_emergency(request):
@@ -145,15 +140,3 @@ def edit_emergency(request, id):
     except Channel.DoesNotExist:
         return Response({'error': 'El canal no existe'}, status=status.HTTP_404_NOT_FOUND)
         
-
-
-@api_view(['GET'])
-def get_telegram_messages(request):
-    try:
-        async_to_sync(get_updates)()
-        return HttpResponse("Mensajes recibidos")
-    except Exception as e:
-        # Registrar el error
-        print(f"Error en get_telegram_messages: {str(e)}")
-        return HttpResponse("Error", status=500)
-
