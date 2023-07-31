@@ -7,6 +7,11 @@ from emergencies.serializers import EmergencySerializer
 from emergencies.serializers import EmergencyListSerializer
 from users.models import CustomUser
 from channels.models import Channel
+from django.core.files.base import ContentFile
+from django.core.files.uploadedfile import InMemoryUploadedFile
+import json
+import base64
+
 
 @api_view(['POST'])
 def create_emergency(request):
@@ -16,27 +21,37 @@ def create_emergency(request):
         channel_id = request.data.get('channel_id')
         reporter_id = request.data.get('reporter_id')
         report_date = datetime.now()
-        
-        images = request.FILES.getlist('images')
-        
+        images = request.data.getlist('images')
+
         try:
             channel = Channel.objects.get(id=channel_id)
             emergency = Emergency.objects.create(title=title, description=description, channel=channel, reporter_id=reporter_id, report_date=report_date)
-           
-            for image in images:
-                emergency.images.create(image=image)
-            
-            emergency.save()
+
+
+            for image_base64 in images:
+                image = base64.b64decode(image_base64)
+                image_file = ContentFile(image, name='emergency_image.png')
+                image_file = InMemoryUploadedFile(
+                    file=image_file,
+                    field_name=None,
+                    name='emergency_image.png',
+                    content_type='image/png',
+                    size=image_file.size,
+                    charset=None
+                )
+                emergency.images = image_file
+                emergency.save()
+
         except Channel.DoesNotExist:
             return Response({'error': 'El canal no existe'}, status=status.HTTP_404_NOT_FOUND)
         except ValueError as e:
             return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
-        
-        serializer = EmergencySerializer(emergency)
 
+        serializer = EmergencySerializer(emergency)
         return Response({'mensaje': 'Emergencia creada exitosamente', 'emergencia': serializer.data}, status=status.HTTP_201_CREATED)
 
     return Response({'error': 'Método no permitido'}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
+
 
 
 @api_view(['GET'])

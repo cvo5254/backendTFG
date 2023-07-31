@@ -33,7 +33,7 @@ def process_telegram_messages(request):
                     existing_channel.save()
 
                 if not existing_emergency:
-                    # Crear una instancia de tu modelo de emergencia
+                    # Crear una instancia del modelo de emergencia
                     emergency = Emergency()
                     emergency.title = "Alerta"
                     emergency.description = text
