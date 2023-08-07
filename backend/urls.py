@@ -19,6 +19,11 @@ from users.views import login_desde_web, login_desde_movil, registro_usuario, ac
 from channels.views import create_channel, subscribe_to_channel, get_user_subscriptions, get_unsubscribed_channels, unsubscribe_from_channel, edit_channel, block_channel, unblock_channel, delete_channel, get_channels
 from emergencies.views import create_emergency, get_channel_emergencies, publish_emergency,  get_emergencies, delete_emergency, edit_emergency, get_emergency
 from emergencies.bot import process_telegram_messages
+from django.conf import settings
+from django.conf.urls.static import static
+
+
+
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -53,3 +58,6 @@ urlpatterns = [
     path('api/<int:gestor_id>/getGestor/', get_gestor, name='obtener_usuario_gestor_por_id'),
     path('telegram/', process_telegram_messages, name='telegram'),
 ]
+
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
